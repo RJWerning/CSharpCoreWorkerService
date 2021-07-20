@@ -21,7 +21,7 @@ namespace CSharpCoreWorkerService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker1 running at: {time}", DateTimeOffset.Now);
+                _logger.LogInformation("Worker1 ExecuteAsync");
                 await Task.Delay(1000, stoppingToken);
             }
         }

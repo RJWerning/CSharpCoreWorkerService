@@ -29,16 +29,39 @@ namespace CSharpCoreWorkerService
                 .Configuration(errorLogConfiguration)
                 .CreateLogger();
 
-            CreateHostBuilder(args).Build().Run();
+            try
+            {
+                Log.Information("====================================================================");
+                Log.Information($"Application Starts. Version: {System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version}");
+                Log.Information($"Application Directory: {AppDomain.CurrentDomain.BaseDirectory}");
+                var builder = CreateHostBuilder(args);
+
+                //CreateHostBuilder(args).Build().Run();
+#if (DEBUG == false)
+                builder.UseWindowsService();
+#endif
+                builder.Build().Run();
+
+            }
+            catch (Exception e)
+            {
+                Log.Fatal(e, "Application terminated unexpectedly");
+            }
+            finally
+            {
+                Log.Information("====================================================================\r\n");
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 //.UseWindowsService()
-                .ConfigureAppConfiguration((context, config) =>
-                {
+                .UseWindowsService()
+                //.ConfigureAppConfiguration((context, config) =>
+                //{
 
-                })
+                //})
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker1>();
